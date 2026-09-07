@@ -1,53 +1,68 @@
 import "./App.css";
 
 import React, { useState } from "react";
-function App() {
-  return (
-    <div className="App">
-      <h1>React + MySQL Form</h1>
-      <Form />
-    </div>
-  );
-}
 
-function Form() {
-  const [formData, setFormData] = useState({ name: "", email: "" });
+function StudentForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    number: "",
+    status: "present"
+  });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:5000/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.text();
-      alert(result);
-    } catch (error) {
-      alert("Error submitting form");
-    }
+    // Send to backend (Node.js + MySQL)
+    await fetch("http://localhost:5000/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData)
+    });
+    alert("Student record submitted!");
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>
-        Name:
-        <input type="text" name="name" value={formData.name} onChange={handleChange} />
-      </label>
-      <br />
-      <label>
-        Email:
-        <input type="email" name="email" value={formData.email} onChange={handleChange} />
-      </label>
-      <br />
+      <div>
+        <label>Student Name:</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div>
+        <label>Student Number:</label>
+        <input
+          type="text"
+          name="number"
+          value={formData.number}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div>
+        <label>Status:</label>
+        <select
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+        >
+          <option value="present">Present</option>
+          <option value="absent">Absent</option>
+        </select>
+      </div>
+
       <button type="submit">Submit</button>
     </form>
   );
 }
 
-
-export default App;
+export default StudentForm;
